@@ -1,0 +1,58 @@
+basePath: /
+definitions:
+  auth.AuthorizationCodeRequest:
+    properties:
+      code:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  termsOfService: http://swagger.io/terms/
+  title: Auth POC開発 swagger API
+  version: "1.0"
+paths:
+  /get-jwt:
+    post:
+      consumes:
+      - application/json
+      description: Verify access token is valid
+      parameters:
+      - description: Authorization Code
+        in: body
+        name: information
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AuthorizationCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Param is valid
+          schema:
+            type: string
+        "400":
+          description: missing Param
+          schema:
+            type: string
+        "401":
+          description: Param is invalid
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Verify Access Token
+      tags:
+      - authentication
+securityDefinitions:
+  ApiKeyAuth:
+    description: Description for this security definition being used
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

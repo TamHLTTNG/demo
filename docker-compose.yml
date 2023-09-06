@@ -1,0 +1,52 @@
+version: "3"
+services:
+  demo-sso-postgres:
+    image: postgres:latest
+    container_name: db_sso_demo
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST} 
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - demo-sso
+    hostname: demo-sso-postgres
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - demo-sso-postgres
+    ports:
+      - "5050:80"
+    networks:
+      - demo-sso
+    restart: unless-stopped
+    
+  app:
+    container_name: backend_app
+    build: .
+    ports: 
+      - ${SERVER_ADDRESS}:8080 
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - demo-sso-postgres         
+    networks:
+      - demo-sso
+
+volumes:
+  api:
+  database_postgres:             
+
+networks:
+  demo-sso:
+    driver: bridge
+

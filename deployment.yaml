@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-hostname-deployment
+  labels:
+    client: internal
+    version: 1.0.0
+    environtment: dev
+  annotations:
+      description: Practice Kubernetes Deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-hostname
+  template:
+    metadata:
+      name: go-hostname-pod
+      labels:
+        app: go-hostname
+    spec:
+      containers:
+        - name: go-hostname
+          image: gcr.io/upbeat-stratum-398201/go-hostname
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
